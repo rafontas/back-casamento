@@ -1,0 +1,14 @@
+C:\Users\Rafa\source\repos\back-casamento\back-casamento\bin\Debug\netcoreapp2.2\back-casamento.deps.json
+C:\Users\Rafa\source\repos\back-casamento\back-casamento\bin\Debug\netcoreapp2.2\back-casamento.runtimeconfig.json
+C:\Users\Rafa\source\repos\back-casamento\back-casamento\bin\Debug\netcoreapp2.2\back-casamento.runtimeconfig.dev.json
+C:\Users\Rafa\source\repos\back-casamento\back-casamento\bin\Debug\netcoreapp2.2\back-casamento.dll
+C:\Users\Rafa\source\repos\back-casamento\back-casamento\bin\Debug\netcoreapp2.2\back-casamento.pdb
+C:\Users\Rafa\source\repos\back-casamento\back-casamento\obj\Debug\netcoreapp2.2\back-casamento.csprojAssemblyReference.cache
+C:\Users\Rafa\source\repos\back-casamento\back-casamento\obj\Debug\netcoreapp2.2\back-casamento.csproj.CoreCompileInputs.cache
+C:\Users\Rafa\source\repos\back-casamento\back-casamento\obj\Debug\netcoreapp2.2\back-casamento.RazorAssemblyInfo.cache
+C:\Users\Rafa\source\repos\back-casamento\back-casamento\obj\Debug\netcoreapp2.2\back-casamento.RazorAssemblyInfo.cs
+C:\Users\Rafa\source\repos\back-casamento\back-casamento\obj\Debug\netcoreapp2.2\back-casamento.AssemblyInfoInputs.cache
+C:\Users\Rafa\source\repos\back-casamento\back-casamento\obj\Debug\netcoreapp2.2\back-casamento.AssemblyInfo.cs
+C:\Users\Rafa\source\repos\back-casamento\back-casamento\obj\Debug\netcoreapp2.2\back-casamento.RazorTargetAssemblyInfo.cache
+C:\Users\Rafa\source\repos\back-casamento\back-casamento\obj\Debug\netcoreapp2.2\back-casamento.dll
+C:\Users\Rafa\source\repos\back-casamento\back-casamento\obj\Debug\netcoreapp2.2\back-casamento.pdb
