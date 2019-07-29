@@ -36,6 +36,8 @@ namespace back_casamento.Controllers
                     return Ok(new RespostaBase(situacaoResposta.SucessoErroNegocio));
 
                 value.salvar();
+
+                value.tipo = TipoEmail.contatoNoivos;
                 await Email.SendEmail<Contato>(value);
 
                 value.tipo = TipoEmail.contatoConvidado;
@@ -48,5 +50,30 @@ namespace back_casamento.Controllers
                 return Ok(new RespostaBase(situacaoResposta.Erro));
             }
         }
+
+        [HttpPost]
+        [EnableCors(origins: "*", headers: "*", methods: "*")]
+        [Route("contatos")]
+        public ActionResult<IEnumerable<Contato>> Get([FromBody] MI value)
+        {
+
+            if (value.at_1 != 234  || value.at_2 != 17801 || value.at_3 != 11029) {
+                return new Contato[] {
+                    new Contato() {
+                        assunto = "Assunto 1",
+                        email = "teste@email.com",
+                        nome = "NomeTeste",
+                        mensagem = "Mensagem de teste bacana",
+                        data = DateTime.Now
+                    }
+                };
+
+            }
+
+            List<Contato> listContato = Contato.GetListaContato();
+
+            return listContato;
+        }
+
     }
 }

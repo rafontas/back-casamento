@@ -38,8 +38,8 @@ namespace back_casamento.Modelo
 
         internal async static Task SendEmail<T>(T email) where T : ToEmail 
         {
-            var apiKey = Email.Config.GetSection("API_KEY_SENDGRID").Value;
-            //var apiKey = System.Environment.GetEnvironmentVariable("API_KEY_SENDGRID");
+            //var apiKey = Email.Config.GetSection("API_KEY_SENDGRID").Value;
+            var apiKey = System.Environment.GetEnvironmentVariable("API_KEY_SENDGRID");
             //string milaEmail  = System.Environment.GetEnvironmentVariable("EMAIL_RAFA");
 
             var client = new SendGridClient(apiKey);
@@ -47,16 +47,13 @@ namespace back_casamento.Modelo
             string assunto = Email.getAssunto<ToEmail>(email);
 
             var msg = new SendGridMessage() {
-                From = new EmailAddress("casorio@casorio.com", "Máquina Casório"),
+                From = new EmailAddress(email.fromEmail(), "Rafa e Mila"),
                 Subject = assunto,
-                PlainTextContent = "Conteúdo teste de email !",
-                HtmlContent = "<div style='background-color: #ededed; border-radius: 5px; color:#54006e;'>" + email.toEmail() + "</div>"
+                PlainTextContent = "Conteúdo teste de email.",
+                HtmlContent = "<div style='background-color: #ededed; border-radius: 5px; color:#54006e; padding: 10px;'>" + email.getEmailMensagem() + "</div>"
             };
 
-            var recebedores = new List<EmailAddress>() {
-                new EmailAddress("rafontas@gmail.com", "Rafael Freitas"),
-                new EmailAddress("kmilaxavier@hotmail.com", "Camila Xavier"),
-            };
+            var recebedores = email.getEmailDestinatario();
             msg.AddTos(recebedores);
 
             Response response = await client.SendEmailAsync(msg);

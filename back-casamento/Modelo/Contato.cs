@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using SendGrid.Helpers.Mail;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -22,14 +23,28 @@ namespace back_casamento.Modelo
 
         public Contato() => this.data = DateTime.Now;
 
-
         public void salvar()
         {
             string json = JsonConvert.SerializeObject(this) + Environment.NewLine;
             File.AppendAllText(Contato.caminhoArquivo, json);
         }
 
-        public string toEmail() => 
+        public static List<Contato> GetListaContato()
+        {
+            string json = File.ReadAllText(Contato.caminhoArquivo);
+            List<Contato> l = JsonConvert.DeserializeObject<List<Contato>>(json);
+
+            if (l.Count <= 0)
+            {
+                l.Add(new Contato() {
+                    assunto = "Não há nenhum contato."
+                });
+            }
+
+            return l;
+        }
+
+        public string getEmailMensagem() => 
             this.GetTipo() == TipoEmail.contatoConvidado ? this.toEmailConvidado() : this.toEmailNoivos();
 
         private string toEmailConvidado()
@@ -57,5 +72,22 @@ namespace back_casamento.Modelo
 
         public TipoEmail GetTipo() => this.tipo;
 
+        public string fromEmail() =>
+            this.GetTipo() == TipoEmail.contatoConvidado ? "rafaemila@rafaemila.com.br" : "maquinaCasorio@rafaemila.com.br";
+
+        public List<EmailAddress> getEmailDestinatario()
+        {
+            if (this.GetTipo() == TipoEmail.contatoConvidado)
+            {
+                return new List<EmailAddress>() {
+                    new EmailAddress(this.email, this.nome)
+                };
+            }
+
+            return new List<EmailAddress>() {
+                new EmailAddress("rafontas@gmail.com", "Rafael Freitas"),
+                new EmailAddress("kmilaxavier@hotmail.com", "Camila Xavier"),
+            };
+        }
     }
 }

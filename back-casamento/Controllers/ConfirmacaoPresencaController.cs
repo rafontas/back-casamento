@@ -27,6 +27,30 @@ namespace back_casamento.Controllers
             } };
         }
 
+
+        [HttpGet]
+        [EnableCors(origins: "*", headers: "*", methods: "*")]
+        public ActionResult<IEnumerable<ConfirmacaoPresenca>> Get(int meuParam = 0, int meuParam2 = 0, int meuParam3 = 0)
+        {
+            if (meuParam != 234 && meuParam2 != 17801 && meuParam3 != 11029)
+            {
+                return new ConfirmacaoPresenca[] 
+                {
+                    new ConfirmacaoPresenca()
+                    {
+                        data = DateTime.Now,
+                        email = "Teste@teste.com.br",
+                        mensagem = "Mensagem de teste.",
+                        nome = "Nome teste",
+                        quantidadeAdultos = 1,
+                        quantidadeCriancas = 2
+                    }
+                };
+            }
+
+            return ConfirmacaoPresenca.GetListaConfirmaPresenca();
+        }
+
         [HttpPost]
         [EnableCors(origins: "*", headers: "*", methods: "*")]
         public async Task<ActionResult<ConfirmacaoPresenca>> PostConfirmacaoPresenca([FromBody] ConfirmacaoPresenca value)

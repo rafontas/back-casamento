@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using SendGrid.Helpers.Mail;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -46,7 +47,14 @@ namespace back_casamento.Modelo
         public static List<ConfirmacaoPresenca> GetListaConfirmaPresenca()
         {
             string json = File.ReadAllText(ConfirmacaoPresenca.caminhoArquivo);
-            return JsonConvert.DeserializeObject<List<ConfirmacaoPresenca>>(json);
+            List <ConfirmacaoPresenca> l = JsonConvert.DeserializeObject<List<ConfirmacaoPresenca>>(json);
+            if (l.Count <= 0) {
+                l.Add(new ConfirmacaoPresenca() {
+                    mensagem = "Não há confirmação de presença;"
+                });
+            }
+
+            return l;
         }
 
         public static void SetaConfirmacoesEnviadas()
@@ -66,7 +74,7 @@ namespace back_casamento.Modelo
             
         private string ToLinhaCSV () => (this.nome.Replace(';', '•') + ";" + this.quantidadeAdultos + ";" + this.quantidadeCriancas + ";" + this.data.ToString("dd/MM/yyyy HH:MM") + ";" + this.email + ";" + this.mensagem.Replace(';', '•').ToString()) ;
 
-        public string toEmail()
+        public string getEmailMensagem()
         {
             string confirmacoes = "Nome;QuantidadeAdultos;QuantidadeCriancas;DataConfirmacao;Email;Mensagem" + Environment.NewLine;
             List<ConfirmacaoPresenca> confAtual = ConfirmacaoPresenca.GetListaConfirmaPresenca();
@@ -83,5 +91,13 @@ namespace back_casamento.Modelo
         public string getNome() => this.nome;
 
         public TipoEmail GetTipo() => TipoEmail.presenca;
+
+        public string fromEmail() => "maquinaCasorio@rafaemila.com.br";
+
+        public List<EmailAddress> getEmailDestinatario() => new List<EmailAddress>() {
+                new EmailAddress("rafontas@gmail.com", "Rafael Freitas"),
+                new EmailAddress("kmilaxavier@hotmail.com", "Camila Xavier")
+         };
+
     }
 }

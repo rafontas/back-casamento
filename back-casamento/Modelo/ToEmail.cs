@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SendGrid.Helpers.Mail;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -7,7 +8,11 @@ namespace back_casamento.Modelo
 {
     interface ToEmail
     {
-        string toEmail();
+        string getEmailMensagem();
+
+        List<EmailAddress> getEmailDestinatario();
+
+        string fromEmail();
 
         TipoEmail GetTipo();
 
