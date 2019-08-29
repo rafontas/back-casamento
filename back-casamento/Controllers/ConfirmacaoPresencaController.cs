@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http.Cors;
 using back_casamento.Modelo;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace back_casamento.Controllers
 {
@@ -14,29 +17,38 @@ namespace back_casamento.Controllers
     public class ConfirmacaoPresencaController : Controller
     {
 
-        [HttpGet]
-        public ActionResult<IEnumerable<ConfirmacaoPresenca>> Get()
-        {
-            return new ConfirmacaoPresenca[] { new ConfirmacaoPresenca() {
-                data = DateTime.Now,
-                email = "Teste@teste.com.br",
-                mensagem = "Mensagem de teste.",
-                nome = "Nome teste",
-                quantidadeAdultos = 1,
-                quantidadeCriancas = 2
-            } };
-        }
+        //[HttpGet]
+        //public ActionResult<IEnumerable<ConfirmacaoPresenca>> Get()
+        //{
+        //    return new ConfirmacaoPresenca[] { new ConfirmacaoPresenca() {
+        //        data = DateTime.Now,
+        //        email = "Teste@teste.com.br",
+        //        mensagem = "Mensagem de teste.",
+        //        nome = "Nome teste",
+        //        quantidadeAdultos = 1,
+        //        quantidadeCriancas = 2
+        //    } };
+        //}
 
+        //[HttpGet]
+        //[EnableCors(origins: "*", headers: "*", methods: "*")]
+        //public ActionResult<string> Get(int meuParam = 0, int meuParam2 = 0, int meuParam3 = 0)
+        //{
+        //    if (meuParam != 234 || meuParam2 != 17801 || meuParam3 != 11029)
+        //    {
+        //        return " Uhull ! ";
+        //    }
+
+        //    return ConfirmacaoPresenca._GetListaConfirmaPresenca();
+        //}
 
         [HttpGet]
         [EnableCors(origins: "*", headers: "*", methods: "*")]
-        public ActionResult<IEnumerable<ConfirmacaoPresenca>> Get(int meuParam = 0, int meuParam2 = 0, int meuParam3 = 0)
+        public async Task<ActionResult<string>> Get(int meuParam = 0, int meuParam2 = 0, int meuParam3 = 0)
         {
-            if (meuParam != 234 && meuParam2 != 17801 && meuParam3 != 11029)
+            if (meuParam != 234 || meuParam2 != 17801 || meuParam3 != 11029)
             {
-                return new ConfirmacaoPresenca[] 
-                {
-                    new ConfirmacaoPresenca()
+                return new ConfirmacaoPresenca()
                     {
                         data = DateTime.Now,
                         email = "Teste@teste.com.br",
@@ -45,10 +57,13 @@ namespace back_casamento.Controllers
                         quantidadeAdultos = 1,
                         quantidadeCriancas = 2
                     }
-                };
+                    .ToString();
             }
 
-            return ConfirmacaoPresenca.GetListaConfirmaPresenca();
+            ConfirmacaoPresenca.SetaConfirmacoesEnviadas();
+
+            return Ok(ConfirmacaoPresenca._getEmailMensagem());
+
         }
 
         [HttpPost]
@@ -72,9 +87,21 @@ namespace back_casamento.Controllers
                 return Ok(new RespostaBase(situacaoResposta.Sucesso));
 
             }
-            catch
+            catch (Exception e)
             {
-                return  Ok(new RespostaBase(situacaoResposta.Erro));
+                var error = new Dictionary<string, string>
+                {
+                    { "Type", e.GetType().ToString()},
+                    { "Message", e.Message},
+                    { "StackTrace", e.StackTrace}
+                };
+
+                foreach (DictionaryEntry data in e.Data)
+                    error.Add(data.Key.ToString(), data.Value.ToString());
+
+                string json = JsonConvert.SerializeObject(error, Formatting.Indented);
+                
+                return Ok(json);
             }
         }
     }

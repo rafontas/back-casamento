@@ -38,9 +38,7 @@ namespace back_casamento.Modelo
 
         internal async static Task SendEmail<T>(T email) where T : ToEmail 
         {
-            //var apiKey = Email.Config.GetSection("API_KEY_SENDGRID").Value;
             var apiKey = System.Environment.GetEnvironmentVariable("API_KEY_SENDGRID");
-            //string milaEmail  = System.Environment.GetEnvironmentVariable("EMAIL_RAFA");
 
             var client = new SendGridClient(apiKey);
 

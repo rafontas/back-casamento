@@ -30,31 +30,23 @@ namespace back_casamento.Modelo
 
         public static void salvar(ConfirmacaoPresenca c)
         {
-            string json = File.ReadAllText(ConfirmacaoPresenca.caminhoArquivo);
-            List<ConfirmacaoPresenca> confP = JsonConvert.DeserializeObject<List<ConfirmacaoPresenca>>(json);
+            List<ConfirmacaoPresenca> confP = ConfirmacaoPresenca.GetListaConfirmaPresenca();
+            c.data = DateTime.Now;
             confP.Add(c);
             File.WriteAllText(caminhoArquivo, JsonConvert.SerializeObject(confP));
         }
 
-        public static void salvar(List<ConfirmacaoPresenca> list)
-        {
-            string json = File.ReadAllText(ConfirmacaoPresenca.caminhoArquivo);
-            List<ConfirmacaoPresenca> confP = JsonConvert.DeserializeObject<List<ConfirmacaoPresenca>>(json);
-            File.WriteAllText("ConfEnviado" + DateTime.Now.ToString("yyyyMMdd-HHmmss") + "_BKP.txt", JsonConvert.SerializeObject(confP));
-            File.WriteAllText(caminhoArquivo, JsonConvert.SerializeObject(list));
-        }
-
         public static List<ConfirmacaoPresenca> GetListaConfirmaPresenca()
         {
-            string json = File.ReadAllText(ConfirmacaoPresenca.caminhoArquivo);
-            List <ConfirmacaoPresenca> l = JsonConvert.DeserializeObject<List<ConfirmacaoPresenca>>(json);
-            if (l.Count <= 0) {
-                l.Add(new ConfirmacaoPresenca() {
-                    mensagem = "Não há confirmação de presença;"
-                });
-            }
+            string json = !File.Exists(ConfirmacaoPresenca.caminhoArquivo) ? 
+                String.Empty :
+                File.ReadAllText(ConfirmacaoPresenca.caminhoArquivo);
 
-            return l;
+            List<ConfirmacaoPresenca> confP = String.IsNullOrEmpty(json) ? 
+                new List<ConfirmacaoPresenca>() : 
+                JsonConvert.DeserializeObject<List<ConfirmacaoPresenca>>(json).ToList();
+
+            return confP;
         }
 
         public static void SetaConfirmacoesEnviadas()
@@ -66,24 +58,40 @@ namespace back_casamento.Modelo
                 c.dtEnviado = DateTime.Now;
             }
 
-            ConfirmacaoPresenca.salvar(listConfPresenca);
+            File.WriteAllText(caminhoArquivo, JsonConvert.SerializeObject(listConfPresenca));
         }
 
         public void posEnAvio() => ConfirmacaoPresenca.SetaConfirmacoesEnviadas();
 
             
-        private string ToLinhaCSV () => (this.nome.Replace(';', '•') + ";" + this.quantidadeAdultos + ";" + this.quantidadeCriancas + ";" + this.data.ToString("dd/MM/yyyy HH:MM") + ";" + this.email + ";" + this.mensagem.Replace(';', '•').ToString()) ;
+        private string ToLinhaCSV () => 
+            "\"" + this.nome.Replace(';', '•') + "\";" +
+            "\"" + this.quantidadeAdultos + "\";" +
+            "\"" + this.quantidadeCriancas + "\";" +
+            "\"" + this.data.ToString("dd/MM/yyyy HH:MM") + "\";" +
+            "\"" + this.dtEnviado.ToString("dd/MM/yyyy HH:MM") + "\";";
+
+        public static string _getEmailMensagem()
+        {
+            string confirmacoes = "\"Nome\";\"QuantidadeAdultos\";\"QuantidadeCriancas\";\"DataEnvio\";\"DataConfirmacao\";" + Environment.NewLine;
+
+            List<ConfirmacaoPresenca> confAtual = ConfirmacaoPresenca.GetListaConfirmaPresenca();
+
+            foreach (ConfirmacaoPresenca c in confAtual)
+                confirmacoes += c.ToLinhaCSV() + Environment.NewLine;
+
+
+            return confirmacoes;
+        }
 
         public string getEmailMensagem()
         {
-            string confirmacoes = "Nome;QuantidadeAdultos;QuantidadeCriancas;DataConfirmacao;Email;Mensagem" + Environment.NewLine;
+            string confirmacoes = "\"Nome\";\"QuantidadeAdultos\";\"QuantidadeCriancas\";\"DataConfirmacao\";" + Environment.NewLine;
             List<ConfirmacaoPresenca> confAtual = ConfirmacaoPresenca.GetListaConfirmaPresenca();
 
-            foreach (ConfirmacaoPresenca c in confAtual) {
-                if (c.enviado) continue;
-
+            foreach (ConfirmacaoPresenca c in confAtual)
                 confirmacoes += c.ToLinhaCSV() + Environment.NewLine;
-            }
+            
 
             return confirmacoes;
         }
